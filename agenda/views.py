@@ -1,10 +1,10 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from datetime import datetime, timezone
 from rest_framework.decorators import api_view
 from agenda.serializers import AgendamentoUteis, AgendamentoAgendado
 from agenda.models import Agendamento
 from rest_framework.response import Response
+from agenda.functions import horariosdisponiveis
 
 
 @api_view(http_method_names=["GET"])
@@ -38,21 +38,3 @@ def agendamento_detail(request,id):
         obj.disponivel = True
         obj.save()
         return Response(status=204)
-
-
-def horariosdisponiveis(data):
-    qry = Agendamento.objects.filter(disponivel=False,data_horario__date=data)
-    h = [ '09:00:00', '09:30:00', '10:00:00', '10:30:00', '11:00:00', '11:30:00', '13:00:00', '13:30:00', '14:00:00', '14:30:00', '15:00:00', '15:30:00', '16:00:00', '16:30:00', '17:00:00', '17:30:00']
-    hd = []
-    for i in h:
-        horarios = {}
-        horarios["data_horario_disponivel"] = data + 'T' + i
-        hd.append(horarios)    
-    for a in qry:
-        hora_qry = a.data_horario.strftime('%H:%M:%S')
-        for e in hd:
-            hora = datetime.fromisoformat(e["data_horario_disponivel"]).time()
-            horas = hora.strftime('%H:%M:%S')
-            if hora_qry == horas:
-                hd.remove(e)
-    return hd
