@@ -3,7 +3,7 @@ from agenda.views import horarios_list, agendar_horario, agendamento_detail
 
 urlpatterns = [
     path('horarios/', horarios_list),
-    path('agendar/', agendar_horario),
-    path('agendar/<int:id>/', agendamento_detail),
+    path('agendamentos/', agendar_horario),
+    path('agendamentos/<int:id>/', agendamento_detail),
 
 ]

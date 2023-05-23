@@ -25,15 +25,23 @@ def agendar_horario(request):
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
     if request.method == "GET":
-        data = request.query_params.get("data")
-        obj = Agendamento.objects.filter(disponivel=False,data_horario__date=data)
-        serializer = AgendamentoAgendado(obj, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        data_param = request.query_params.get("data")
+        if data_param:
+            obj = Agendamento.objects.filter(disponivel=False,data_horario__date=data_param)
+            serializer = AgendamentoAgendado(obj, many=True)
+            return JsonResponse(serializer.data, safe=False)
+        else:
+            obj = Agendamento.objects.filter(disponivel=False)
+            serializer = AgendamentoAgendado(obj, many=True)
+            return JsonResponse(serializer.data, safe=False)
 
 
-@api_view(http_method_names=["DELETE"])
+@api_view(http_method_names=["GET", "DELETE"])
 def agendamento_detail(request,id):
     obj = get_object_or_404(Agendamento, id=id)
+    if request.method == "GET":
+        serializer = AgendamentoAgendado(obj)
+        return JsonResponse(serializer.data, status=200)
     if request.method == "DELETE":
         obj.disponivel = True
         obj.save()
