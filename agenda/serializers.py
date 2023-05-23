@@ -12,7 +12,7 @@ class AgendamentoAgendado(serializers.ModelSerializer):
 
     class Meta:
         model = Agendamento
-        fields = ["id", "data_horario"]
+        fields = ["id", "data_horario", "disponivel"]
         
     def validate_data_horario(self, value):
         if value < timezone.now():

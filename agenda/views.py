@@ -36,7 +36,7 @@ def agendar_horario(request):
             return JsonResponse(serializer.data, safe=False)
 
 
-@api_view(http_method_names=["GET", "DELETE"])
+@api_view(http_method_names=["GET", "DELETE", "PATCH"])
 def agendamento_detail(request,id):
     obj = get_object_or_404(Agendamento, id=id)
     if request.method == "GET":
@@ -46,3 +46,10 @@ def agendamento_detail(request,id):
         obj.disponivel = True
         obj.save()
         return Response(status=204)
+    if request.method == "PATCH":
+        serializer = AgendamentoAgendado(obj, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+    
